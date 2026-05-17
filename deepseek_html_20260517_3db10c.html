@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAT 103 – Complete Course | Definitions + R Code</title>
+    <!-- MathJax for beautiful math rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            line-height: 1.65;
+            color: #1a2c3e;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a4d62, #2c7aa0);
+            color: white;
+            padding: 2.5rem 2rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            margin-top: 0.8rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.92;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 1.2rem;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1.1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: #f0f4f8;
+            border-bottom: 2px solid #cde3ef;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f0f4f8;
+            color: #1f5068;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .tab.active {
+            background: white;
+            color: #1a4d62;
+            border-bottom: 3px solid #2c7aa0;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e6edf4;
+        }
+
+        .content-pane {
+            display: none;
+        }
+
+        .content-pane.active {
+            display: block;
+        }
+
+        .chapters-wrapper {
+            padding: 2rem;
+        }
+
+        .quiz-wrapper {
+            padding: 2rem;
+        }
+
+        .chapter-card {
+            background: #ffffff;
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e0e9f0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: all 0.2s;
+        }
+
+        .chapter-head {
+            background: #f8fbfe;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 2px solid #cde3ef;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .chapter-head:hover {
+            background: #f0f6fc;
+        }
+
+        .chapter-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f6e8c;
+            letter-spacing: 1px;
+        }
+
+        .chapter-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a4d62;
+            margin-top: 0.2rem;
+        }
+
+        .toggle-icon {
+            font-size: 1.6rem;
+            color: #2c7aa0;
+            font-weight: 300;
+        }
+
+        .lecture-content {
+            padding: 1.8rem 2rem 2rem 2rem;
+            display: none;
+            background: #fff;
+        }
+
+        .chapter-card.open .lecture-content {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f5068;
+            margin: 1.5rem 0 0.8rem 0;
+            border-left: 5px solid #2c7aa0;
+            padding-left: 0.9rem;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .definition-box {
+            background: #f0f7fc;
+            padding: 1rem 1.4rem;
+            border-radius: 0.8rem;
+            margin: 1rem 0;
+            border-left: 4px solid #2c7aa0;
+        }
+
+        .definition-term {
+            font-weight: 700;
+            color: #1a4d62;
+        }
+
+        .example-box {
+            background: #fef7e0;
+            border-left: 5px solid #e6b12e;
+            padding: 1rem 1.4rem;
+            border-radius: 0.8rem;
+            margin: 1.2rem 0;
+        }
+
+        .key-point {
+            background: #e9f3e6;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.8rem;
+            font-weight: 500;
+            margin: 1rem 0;
+        }
+
+        .r-code {
+            background: #1e2a36;
+            color: #e6edf3;
+            padding: 1rem 1.2rem;
+            border-radius: 0.8rem;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .r-code strong {
+            color: #ffb86c;
+        }
+
+        .r-note {
+            background: #eef2fa;
+            border-left: 4px solid #2c7aa0;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .math-center {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        ul, .note-list {
+            margin: 0.8rem 0 1rem 1.8rem;
+        }
+
+        li {
+            margin: 0.6rem 0;
+        }
+
+        .quiz-question {
+            background: #f9fafb;
+            border: 1px solid #e0e9f0;
+            border-radius: 1rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-question-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+            color: #1a4d62;
+        }
+
+        .quiz-options {
+            margin: 0.5rem 0 0.5rem 1.5rem;
+        }
+
+        .quiz-options label {
+            display: block;
+            margin: 0.4rem 0;
+            cursor: pointer;
+        }
+
+        .quiz-feedback {
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+            display: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .quiz-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .quiz-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .quiz-submit-btn {
+            background: #2c7aa0;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .quiz-submit-btn:hover {
+            background: #1a5d7a;
+        }
+
+        .quiz-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e9f3e6;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .footer {
+            background: #e4edf3;
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.85rem;
+            color: #2c5a74;
+        }
+
+        @media (max-width: 700px) {
+            .chapters-wrapper, .quiz-wrapper {
+                padding: 1rem;
+            }
+            .chapter-title {
+                font-size: 1.3rem;
+            }
+            .section-title {
+                font-size: 1.2rem;
+            }
+            .lecture-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📖 STAT 103 · Complete Course</h1>
+        <p>Every concept is defined in complete sentences. R code examples are provided for visualization, descriptive statistics, confidence intervals, and hypothesis testing.</p>
+        <div class="badge-row">
+            <span class="badge">📋 Data Collection</span>
+            <span class="badge">📊 Visualization + R</span>
+            <span class="badge">📈 Descriptive Stats + R</span>
+            <span class="badge">🎲 Probability</span>
+            <span class="badge">📏 Normal Dist.</span>
+            <span class="badge">🔁 Sampling & CLT</span>
+            <span class="badge">📐 Confidence Intervals + R</span>
+            <span class="badge">🔬 Hypothesis Tests + R</span>
+            <span class="badge">🔒 Privacy & Ethics</span>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab active" onclick="showPane('notes')">📚 Lecture Notes + R Code</button>
+        <button class="tab" onclick="showPane('quiz')">📝 Comprehensive Quiz</button>
+    </div>
+
+    <!-- LECTURE NOTES PANE -->
+    <div id="notes-pane" class="content-pane active">
+        <div class="chapters-wrapper">
+            <!-- CHAPTER 1: DATA COLLECTION -->
+            <div class="chapter-card open">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 1</div>
+                        <div class="chapter-title">📋 Data Collection · Sampling Methods</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">1.1 Core Definitions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Population:</span> A population is the entire collection of individuals, objects, or measurements that a researcher wants to study or draw conclusions about. For example, all registered voters in the United States form a population.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Sample:</span> A sample is a subset of the population that is actually observed or measured. Researchers use samples because studying an entire population is often too expensive or time-consuming. For example, surveying 1,000 randomly selected voters is a sample.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Parameter:</span> A parameter is a numerical value that summarizes a characteristic of an entire population. For example, the true average height of all adult women in a city is a parameter.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Statistic:</span> A statistic is a numerical value that summarizes a characteristic of a sample. Statisticians use statistics to estimate unknown population parameters. For example, the average height of 100 randomly selected women is a statistic.
+                    </div>
+                    
+                    <div class="section-title">1.2 Sampling Methods</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Simple Random Sample (SRS):</span> A simple random sample is a sampling method in which every member of the population has an equal chance of being selected, and every possible sample of a given size has an equal chance of being chosen. This is considered the gold standard because it minimizes bias.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Stratified Sampling:</span> Stratified sampling is a method in which the researcher divides the population into distinct subgroups called strata (based on characteristics like age, gender, or region) and then draws a simple random sample from each stratum. This ensures that all important subgroups are represented in the sample.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Cluster Sampling:</span> Cluster sampling is a method in which the researcher divides the population into groups called clusters (such as schools or neighborhoods), randomly selects some clusters, and then includes every member of the selected clusters in the sample. This method is often more practical and less expensive than simple random sampling.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Systematic Sampling:</span> Systematic sampling is a method in which the researcher selects every kth member of the population after a random starting point. For example, the researcher might select every 10th person on an alphabetical list.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Convenience Sampling:</span> Convenience sampling is a non-random sampling method in which the researcher selects individuals who are easy to reach. This method is prone to serious bias and should be avoided whenever possible because the sample may not represent the population accurately.
+                    </div>
+                    
+                    <div class="section-title">1.3 Types of Bias</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Selection Bias:</span> Selection bias occurs when the method of selecting the sample systematically excludes some members of the population, making the sample unrepresentative of the population.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Nonresponse Bias:</span> Nonresponse bias occurs when selected individuals choose not to participate in the study, and the nonrespondents differ from the respondents in meaningful ways.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Response Bias:</span> Response bias occurs when participants give inaccurate responses due to question wording, social pressure, faulty memory, or a desire to please the interviewer.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Voluntary Response Bias:</span> Voluntary response bias occurs when individuals choose to participate in a study, such as in online polls or call-in surveys. This method often attracts people with strong opinions, leading to a biased sample.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 2: DATA VISUALIZATION with R -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 2</div>
+                        <div class="chapter-title">📊 Basic Visualization of Data · with R</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">2.1 Graphs for Categorical Data</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Bar Chart:</span> A bar chart is a graph that represents the frequency or relative frequency of each category using separate rectangular bars. The bars do not touch each other, which emphasizes that the categories are distinct.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Pie Chart:</span> A pie chart is a circular graph that shows each category as a slice of the circle. The angle (or area) of each slice is proportional to the relative frequency of that category. Pie charts work best when there are only a small number of categories.
+                    </div>
+                    
+                    <div class="section-title">2.2 Graphs for Quantitative Data</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Histogram:</span> A histogram is a graph that divides the range of quantitative data into intervals called bins and uses vertical bars to show the number of observations that fall into each bin. The bars in a histogram touch each other because the variable is continuous. Histograms reveal the shape, center, and spread of a distribution.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Boxplot (Box-and-Whisker Plot):</span> A boxplot is a graph that displays the five-number summary of a dataset: the minimum, the first quartile (Q1), the median, the third quartile (Q3), and the maximum. The "box" spans the interquartile range (IQR), and the "whiskers" extend to the most extreme data points that are not outliers. Boxplots are excellent for identifying outliers and comparing distributions across multiple groups.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Scatterplot:</span> A scatterplot is a graph that displays the relationship between two quantitative variables. Each point on the scatterplot represents one observation, with its x-coordinate corresponding to one variable and its y-coordinate corresponding to the other variable. Scatterplots reveal the direction (positive or negative), form (linear or curved), and strength of the relationship between the two variables.
+                    </div>
+                    
+                    <div class="section-title">📊 R Code: Creating Basic Plots</div>
+                    <div class="r-code">
+                        <strong># Copy and paste this code into myCompiler.io/R</strong><br><br>
+                        # Create sample data<br>
+                        exam_scores <- c(65, 70, 72, 74, 75, 78, 79, 80, 82, 83, 85, 86, 88, 90, 92, 94, 95, 96, 98, 100)<br>
+                        study_hours <- c(1, 1.5, 2, 2.5, 2, 3, 3.5, 3, 4, 4.5, 5, 4, 5.5, 6, 6, 7, 7.5, 8, 9, 10)<br>
+                        gender <- factor(c(rep("F",10), rep("M",10)))<br><br>
+                        
+                        <strong># Histogram of exam scores</strong><br>
+                        hist(exam_scores, main="Histogram of Exam Scores", xlab="Scores", col="skyblue", border="white")<br><br>
+                        
+                        <strong># Boxplot of exam scores</strong><br>
+                        boxplot(exam_scores, main="Boxplot of Exam Scores", ylab="Scores", col="lightgreen")<br><br>
+                        
+                        <strong># Scatterplot: study hours vs. exam score</strong><br>
+                        plot(study_hours, exam_scores, main="Study Hours vs. Exam Score", xlab="Hours Studied", ylab="Exam Score", pch=19, col="blue")<br><br>
+                        
+                        <strong># Side-by-side boxplots by gender</strong><br>
+                        boxplot(exam_scores ~ gender, main="Exam Scores by Gender", xlab="Gender", ylab="Scores", col=c("pink","lightblue"))
+                    </div>
+                    <div class="r-note">
+                        💡 <strong>Try it yourself:</strong> Go to <a href="https://www.mycompiler.io/new/r" target="_blank">myCompiler.io/R</a>, paste the code above, and click "Run". You will see all four plots generated.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 3: DESCRIPTIVE STATISTICS with R -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 3</div>
+                        <div class="chapter-title">📈 Descriptive Statistics · with R</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">3.1 Measures of Center</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Mean (Arithmetic Mean):</span> The mean is the sum of all data values divided by the number of observations. It is calculated using the formula \( \bar{x} = \frac{\sum_{i=1}^{n} x_i}{n} \). The mean is sensitive to extreme values, meaning that outliers can pull the mean toward them.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Median:</span> The median is the middle value of a dataset when the values are arranged in order from smallest to largest. If there is an even number of observations, the median is the average of the two middle numbers. The median is resistant to outliers, meaning it is not affected by extreme values.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Mode:</span> The mode is the value that appears most frequently in a dataset. A dataset may have one mode (unimodal), two modes (bimodal), or no mode if all values occur with the same frequency.
+                    </div>
+                    
+                    <div class="section-title">3.2 Measures of Spread</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Range:</span> The range is the difference between the maximum value and the minimum value in a dataset. It is calculated as \( \text{Range} = \text{Max} - \text{Min} \). The range uses only two values and ignores the rest of the data.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Interquartile Range (IQR):</span> The interquartile range is the difference between the third quartile (Q3, the 75th percentile) and the first quartile (Q1, the 25th percentile). It is calculated as \( \text{IQR} = Q_3 - Q_1 \). The IQR contains the middle 50 percent of the data and is resistant to outliers.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Variance:</span> The variance is the average of the squared deviations from the mean. For a sample, the variance is calculated using the formula \( s^2 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n-1} \). The variance is measured in squared units of the original data.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Standard Deviation:</span> The standard deviation is the square root of the variance, so it is expressed in the same units as the original data. The formula is \( s = \sqrt{s^2} \). A small standard deviation indicates that the data points are clustered closely around the mean, while a large standard deviation indicates that the data points are spread out over a wider range.
+                    </div>
+                    
+                    <div class="section-title">📊 R Code: Calculating Descriptive Statistics</div>
+                    <div class="r-code">
+                        <strong># Copy and paste this code into myCompiler.io/R</strong><br><br>
+                        # Sample data: exam scores from 20 students<br>
+                        scores <- c(72, 78, 65, 90, 88, 76, 84, 95, 70, 82, 79, 91, 85, 77, 83, 89, 92, 74, 80, 86)<br><br>
+                        
+                        <strong># Measures of center</strong><br>
+                        mean(scores)        # This calculates the arithmetic mean<br>
+                        median(scores)      # This calculates the median<br><br>
+                        
+                        <strong># Custom function for mode</strong><br>
+                        get_mode <- function(x) {<br>
+                          &nbsp;&nbsp;ux <- unique(x)<br>
+                          &nbsp;&nbsp;ux[which.max(tabulate(match(x, ux)))]<br>
+                        }<br>
+                        get_mode(scores)    # This finds the mode<br><br>
+                        
+                        <strong># Measures of spread</strong><br>
+                        range(scores)       # This returns both the minimum and maximum<br>
+                        diff(range(scores)) # This calculates the range (max - min)<br>
+                        IQR(scores)         # This calculates the interquartile range<br>
+                        var(scores)         # This calculates the variance<br>
+                        sd(scores)          # This calculates the standard deviation<br><br>
+                        
+                        <strong># Five-number summary</strong><br>
+                        summary(scores)     # This gives min, Q1, median, mean, Q3, and max
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 4: PROBABILITY -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 4</div>
+                        <div class="chapter-title">🎲 Basic Probability & Randomness</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">4.1 Core Definitions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Probability:</span> Probability is a numerical measure of the likelihood that a particular event will occur. Probabilities always fall between 0 and 1, inclusive. A probability of 0 means the event is impossible, and a probability of 1 means the event is certain.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Sample Space:</span> The sample space, often denoted S, is the set of all possible outcomes of a random process. For example, when rolling a fair six-sided die, the sample space is {1, 2, 3, 4, 5, 6}.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Event:</span> An event is any subset of the sample space. For example, rolling an even number (2, 4, or 6) is an event.
+                    </div>
+                    
+                    <div class="section-title">4.2 Probability Rules</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Complement Rule:</span> The complement rule states that the probability of an event not occurring is equal to 1 minus the probability that it does occur. In symbols, \( P(\text{not } A) = 1 - P(A) \).
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Addition Rule for Mutually Exclusive Events:</span> Two events are mutually exclusive if they cannot happen at the same time. For mutually exclusive events, the probability that either event A or event B occurs is the sum of their individual probabilities: \( P(A \text{ or } B) = P(A) + P(B) \).
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">General Addition Rule:</span> For any two events A and B (whether they are mutually exclusive or not), the probability that A or B occurs is \( P(A \text{ or } B) = P(A) + P(B) - P(A \text{ and } B) \). The subtraction of \( P(A \text{ and } B) \) corrects for double-counting the overlap.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Multiplication Rule for Independent Events:</span> Two events are independent if the occurrence of one does not affect the probability of the other. For independent events, the probability that both A and B occur is the product of their individual probabilities: \( P(A \text{ and } B) = P(A) \times P(B) \).
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 5: NORMAL DISTRIBUTION -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 5</div>
+                        <div class="chapter-title">📏 The Normal Distribution & z‑scores</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">5.1 Properties of the Normal Distribution</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Normal Distribution:</span> The normal distribution is a symmetric, bell-shaped probability distribution that is extremely important in statistics. Its properties include the following: the mean, median, and mode are all equal and located at the center; the curve is symmetric about the mean; the total area under the curve equals 1 (representing 100% of the data); and the curve approaches but never touches the horizontal axis.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Notation:</span> A normal distribution is denoted as \( N(\mu, \sigma) \), where \( \mu \) (mu) represents the mean and \( \sigma \) (sigma) represents the standard deviation.
+                    </div>
+                    
+                    <div class="section-title">5.2 The z-score</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">z-score (Standard Score):</span> A z-score tells us how many standard deviations a particular value is away from the mean. The formula for calculating a z-score is \( z = \frac{x - \mu}{\sigma} \). A positive z-score means the value is above the mean, a negative z-score means the value is below the mean, and a z-score of 0 means the value equals the mean. The standard normal distribution, denoted \( Z \sim N(0, 1) \), has a mean of 0 and a standard deviation of 1.
+                    </div>
+                    
+                    <div class="section-title">5.3 The Empirical Rule (68-95-99.7 Rule)</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Empirical Rule:</span> For any normal distribution, approximately 68 percent of the data falls within one standard deviation of the mean (between \( \mu - \sigma \) and \( \mu + \sigma \)). Approximately 95 percent of the data falls within two standard deviations of the mean (between \( \mu - 2\sigma \) and \( \mu + 2\sigma \)). Approximately 99.7 percent of the data falls within three standard deviations of the mean (between \( \mu - 3\sigma \) and \( \mu + 3\sigma \)).
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 6: SAMPLING DISTRIBUTIONS & CLT -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 6</div>
+                        <div class="chapter-title">🔁 Sampling Distributions & the Central Limit Theorem</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">6.1 Core Definitions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Sampling Distribution:</span> A sampling distribution is the distribution of a statistic (such as the sample mean or sample proportion) calculated from many different samples of the same size taken from the same population. It describes how the statistic varies from sample to sample due to random sampling.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Standard Error:</span> The standard error is the standard deviation of a sampling distribution. For the sample mean, the standard error is \( \sigma_{\bar{x}} = \frac{\sigma}{\sqrt{n}} \), where \( \sigma \) is the population standard deviation and n is the sample size.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Unbiased Estimator:</span> An unbiased estimator is a statistic whose sampling distribution has a mean equal to the true population parameter. The sample mean is an unbiased estimator of the population mean because \( \mu_{\bar{x}} = \mu \).
+                    </div>
+                    
+                    <div class="section-title">6.2 The Central Limit Theorem</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Central Limit Theorem (CLT):</span> The Central Limit Theorem states that when the sample size n is sufficiently large (typically n ≥ 30), the sampling distribution of the sample mean \( \bar{x} \) will be approximately normal, regardless of the shape of the original population distribution. Mathematically, we write \( \bar{x} \sim N\left(\mu, \frac{\sigma}{\sqrt{n}}\right) \) for large n.
+                    </div>
+                    
+                    <div class="section-title">6.3 Sampling Distribution for Proportions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Sample Proportion (\( \hat{p} \)):</span> The sample proportion is the number of successes in the sample divided by the sample size: \( \hat{p} = \frac{\text{number of successes}}{n} \). The mean of the sampling distribution of \( \hat{p} \) is the population proportion p, and the standard error is \( \sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}} \).
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 7: CONFIDENCE INTERVALS with R -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 7</div>
+                        <div class="chapter-title">📐 Confidence Intervals · with R</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">7.1 Core Definitions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Confidence Interval:</span> A confidence interval is a range of plausible values for a population parameter (such as the population mean μ or population proportion p). Instead of providing a single point estimate, a confidence interval provides an interval estimate that includes a margin of error.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Confidence Level:</span> The confidence level (often 90%, 95%, or 99%) is the long-run success rate of the confidence interval method. If we were to take many samples and construct a 95% confidence interval from each sample, approximately 95% of those intervals would contain the true population parameter.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Margin of Error:</span> The margin of error is the half-width of the confidence interval. It is calculated as the critical value multiplied by the standard error. For a population mean, the margin of error is \( z^* \cdot \frac{\sigma}{\sqrt{n}} \).
+                    </div>
+                    
+                    <div class="section-title">7.2 Formula for a Confidence Interval for a Population Mean</div>
+                    <div class="math-center">\[ \bar{x} \pm z^* \cdot \frac{\sigma}{\sqrt{n}} \]</div>
+                    <p>The critical values \( z^* \) for common confidence levels are as follows: for 90% confidence, \( z^* = 1.645 \); for 95% confidence, \( z^* = 1.96 \); and for 99% confidence, \( z^* = 2.576 \).</p>
+                    
+                    <div class="section-title">7.3 Formula for a Confidence Interval for a Population Proportion</div>
+                    <div class="math-center">\[ \hat{p} \pm z^* \cdot \sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \]</div>
+                    
+                    <div class="section-title">📊 R Code: Computing Confidence Intervals</div>
+                    <div class="r-code">
+                        <strong># Copy and paste this code into myCompiler.io/R</strong><br><br>
+                        <strong># Confidence interval for a mean (using t-distribution)</strong><br>
+                        # Sample data: weights of 15 students (in kilograms)<br>
+                        weights <- c(62, 58, 70, 65, 68, 72, 60, 64, 69, 71, 63, 66, 67, 73, 61)<br><br>
+                        
+                        # The t.test function calculates a 95% confidence interval for the mean<br>
+                        t.test(weights, conf.level = 0.95)<br><br>
+                        
+                        <strong># Manual calculation for a proportion confidence interval</strong><br>
+                        # Suppose 45 out of 100 surveyed students prefer online learning<br>
+                        successes <- 45<br>
+                        n <- 100<br>
+                        p_hat <- successes / n<br>
+                        z_star <- 1.96   # This is the critical value for 95% confidence<br>
+                        se <- sqrt(p_hat * (1 - p_hat) / n)  # This is the standard error<br>
+                        margin_of_error <- z_star * se<br>
+                        lower_bound <- p_hat - margin_of_error<br>
+                        upper_bound <- p_hat + margin_of_error<br><br>
+                        
+                        cat("95% CI for proportion: (", lower_bound, ", ", upper_bound, ")\n")<br><br>
+                        
+                        <strong># Built-in proportion test in R</strong><br>
+                        prop.test(successes, n, conf.level = 0.95)
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 8: HYPOTHESIS TESTING with R -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 8</div>
+                        <div class="chapter-title">🔬 Hypothesis Testing · with R</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">8.1 Core Definitions</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Null Hypothesis (\( H_0 \)):</span> The null hypothesis is the statement being tested in a hypothesis test. It usually represents "no effect," "no difference," or the status quo. The null hypothesis is assumed to be true until the evidence suggests otherwise.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Alternative Hypothesis (\( H_a \) or \( H_1 \)):</span> The alternative hypothesis is the statement that we suspect is true instead of the null hypothesis. The alternative can be one-sided (for example, \( \mu > 100 \) or \( \mu < 100 \)) or two-sided (for example, \( \mu \neq 100 \)).
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">p-value:</span> The p-value is the probability of obtaining a test statistic as extreme as (or more extreme than) the one observed in the sample, assuming that the null hypothesis is true. A very small p-value indicates that the observed data would be very unlikely if the null hypothesis were true, which provides evidence against the null hypothesis.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Significance Level (\( \alpha \)):</span> The significance level is the threshold used to decide whether to reject the null hypothesis. Common values for \( \alpha \) are 0.10, 0.05, and 0.01. If the p-value is less than or equal to \( \alpha \), we reject the null hypothesis.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Type I Error:</span> A Type I error occurs when we reject a null hypothesis that is actually true. The probability of making a Type I error is equal to the significance level \( \alpha \).
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Type II Error:</span> A Type II error occurs when we fail to reject a null hypothesis that is actually false. The probability of making a Type II error is denoted \( \beta \).
+                    </div>
+                    
+                    <div class="section-title">📊 R Code: One-Sample t-test</div>
+                    <div class="r-code">
+                        <strong># Copy and paste this code into myCompiler.io/R</strong><br><br>
+                        <strong># Example: A coffee machine is supposed to dispense 250 ml per cup.</strong><br>
+                        # We take a sample of 20 cups to test if the true mean is different from 250 ml.<br>
+                        sample_volumes <- c(248, 252, 249, 251, 247, 253, 250, 249, 252, 248,<br>
+                                           250, 251, 247, 253, 249, 250, 252, 248, 251, 250)<br><br>
+                        
+                        <strong># Two-tailed t-test: H₀: μ = 250 versus Hₐ: μ ≠ 250</strong><br>
+                        t.test(sample_volumes, mu = 250, alternative = "two.sided")<br><br>
+                        
+                        <strong># One-tailed t-test: H₀: μ = 250 versus Hₐ: μ > 250</strong><br>
+                        t.test(sample_volumes, mu = 250, alternative = "greater")<br><br>
+                        
+                        <strong># One-proportion z-test example</strong><br>
+                        # A claim says that 80% of students own a laptop. In a sample of 50 students, 35 own a laptop.<br>
+                        prop.test(35, 50, p = 0.80, alternative = "two.sided")
+                    </div>
+                    <div class="r-note">
+                        💡 <strong>Interpreting the output:</strong> Look at the p-value displayed in the output. If the p-value is less than 0.05, we reject the null hypothesis. The output also provides a confidence interval and the sample estimate.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAPTER 9: DATA PRIVACY AND ETHICS -->
+            <div class="chapter-card">
+                <div class="chapter-head" onclick="toggleChapter(this)">
+                    <div>
+                        <div class="chapter-number">CHAPTER 9</div>
+                        <div class="chapter-title">🔒 Data Privacy and Ethics</div>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lecture-content">
+                    <div class="section-title">9.1 Ethical Principles in Research</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Informed Consent:</span> Informed consent is the ethical principle that research participants must be fully informed about the nature of the study, any potential risks, and their rights before they voluntarily agree to participate.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Confidentiality:</span> Confidentiality is the ethical obligation to protect individual responses and not share them in any way that could identify specific participants. Researchers must store data securely and report only aggregate results.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Anonymity:</span> Anonymity is a stronger form of protection than confidentiality. When data are anonymous, the researcher cannot link the responses back to any specific individual, even if they wanted to.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Institutional Review Board (IRB):</span> An Institutional Review Board is a committee that reviews research proposals involving human subjects to ensure that the study meets ethical standards and protects participants from harm.
+                    </div>
+                    
+                    <div class="section-title">9.2 Ethical Issues in Data Analysis</div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">P-hacking:</span> P-hacking is the unethical practice of running multiple statistical tests or trying different analyses until a significant p-value is found. This inflates the Type I error rate and produces false discoveries.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">HARKing (Hypothesizing After the Results are Known):</span> HARKing is the unethical practice of presenting a post-hoc hypothesis as if it had been made before the analysis was conducted. This misleads readers about the strength of the evidence.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Cherry-picking:</span> Cherry-picking is the unethical practice of selectively reporting only the results that support a desired conclusion while ignoring contradictory findings.
+                    </div>
+                    
+                    <div class="definition-box">
+                        <span class="definition-term">Data Fabrication and Falsification:</span> Data fabrication is making up data that never existed, and data falsification is altering existing data. Both are serious forms of scientific misconduct that can end research careers.
+                    </div>
+                    
+                    <div class="section-title">9.3 Responsible Statistical Practice</div>
+                    <ul>
+                        <li>Always report all methods and any excluded data points.</li>
+                        <li>Disclose limitations and potential sources of bias.</li>
+                        <li>Share data and code when possible to allow replication.</li>
+                        <li>Interpret p-values and confidence intervals correctly, avoiding overstatement of results.</li>
+                        <li>Respect the privacy and dignity of research participants.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUIZ PANE -->
+    <div id="quiz-pane" class="content-pane">
+        <div class="quiz-wrapper">
+            <h2 style="color:#1a4d62; margin-bottom:1rem;">📝 Comprehensive STAT 103 Quiz</h2>
+            <p>Test your understanding of all chapters. Select the best answer for each question, then click "Submit Quiz" at the bottom.</p>
+            <div id="quiz-container"></div>
+            <button class="quiz-submit-btn" onclick="submitQuiz()">Submit Quiz</button>
+            <div id="quiz-score" class="quiz-score"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        📚 STAT 103 Complete Course — Every concept is defined in complete sentences. R code is provided for visualization, descriptive statistics, confidence intervals, and hypothesis testing. All code can be run on <a href="https://www.mycompiler.io/new/r" target="_blank">myCompiler.io/R</a>.
+    </div>
+</div>
+
+<script>
+    function toggleChapter(headerEl) {
+        const card = headerEl.closest('.chapter-card');
+        if (card) {
+            card.classList.toggle('open');
+        }
+    }
+
+    function showPane(pane) {
+        const notesPane = document.getElementById('notes-pane');
+        const quizPane = document.getElementById('quiz-pane');
+        const tabs = document.querySelectorAll('.tab');
+        
+        if (pane === 'notes') {
+            notesPane.classList.add('active');
+            quizPane.classList.remove('active');
+            tabs[0].classList.add('active');
+            tabs[1].classList.remove('active');
+        } else {
+            notesPane.classList.remove('active');
+            quizPane.classList.add('active');
+            tabs[0].classList.remove('active');
+            tabs[1].classList.add('active');
+        }
+    }
+
+    const quizQuestions = [
+        { text: "What is the most important characteristic of a simple random sample?", options: ["Every member of the population has an equal chance of being selected", "It is the easiest sampling method to implement", "It guarantees a representative sample", "It always has a large sample size"], correct: 0 },
+        { text: "Which graph is best for showing the relationship between two quantitative variables?", options: ["Bar chart", "Pie chart", "Scatterplot", "Histogram"], correct: 2 },
+        { text: "If a distribution is skewed to the right (positively skewed), which statement is true?", options: ["Mean < Median", "Mean = Median", "Mean > Median", "The distribution is symmetric"], correct: 2 },
+        { text: "What is the formula for the sample mean?", options: ["s² = Σ(x - μ)² / (n-1)", "x̄ = Σx / n", "z = (x - μ) / σ", "IQR = Q₃ - Q₁"], correct: 1 },
+        { text: "If two events are mutually exclusive, what is P(A or B)?", options: ["P(A) + P(B)", "P(A) × P(B)", "P(A) + P(B) - P(A and B)", "1 - P(A)"], correct: 0 },
+        { text: "A z-score of 2.5 means:", options: ["The value is 2.5 units above the mean", "The value is 2.5 standard deviations above the mean", "The value is 2.5 standard deviations below the mean", "The value equals the mean"], correct: 1 },
+        { text: "According to the Central Limit Theorem, for large n, the sampling distribution of x̄ is approximately:", options: ["Binomial", "Uniform", "Normal", "Skewed"], correct: 2 },
+        { text: "A 95% confidence interval for a population proportion is (0.52, 0.68). Which statement is correct?", options: ["There is a 95% probability that the true proportion is between 0.52 and 0.68", "We are 95% confident that the true proportion is between 0.52 and 0.68", "95% of the data falls between 0.52 and 0.68", "The margin of error is 0.16"], correct: 1 },
+        { text: "If the p-value is 0.02 and α = 0.05, what is the correct decision?", options: ["Reject H₀", "Fail to reject H₀", "Accept H₀", "Increase the sample size"], correct: 0 },
+        { text: "What is a Type I error?", options: ["Failing to reject a false null hypothesis", "Rejecting a true null hypothesis", "Failing to reject a true null hypothesis", "Rejecting a false null hypothesis"], correct: 1 },
+        { text: "Which sampling method is most prone to bias?", options: ["Simple random sample", "Stratified sample", "Cluster sample", "Convenience sample"], correct: 3 },
+        { text: "What does the interquartile range (IQR) measure?", options: ["The spread of the entire dataset", "The spread of the middle 50% of the data", "The average distance from the mean", "The most common value"], correct: 1 },
+        { text: "Which graph is best for identifying outliers?", options: ["Bar chart", "Pie chart", "Boxplot", "Contingency table"], correct: 2 },
+        { text: "What does 'p-hacking' refer to in statistical ethics?", options: ["Hacking into a database to steal p-values", "Running multiple tests until a significant result is found", "Using a very small p-value threshold", "Deleting outliers to improve results"], correct: 1 },
+        { text: "If the population standard deviation σ = 10 and n = 100, what is the standard error of the sample mean?", options: ["10", "1", "0.1", "100"], correct: 1 }
+    ];
+
+    function generateQuiz() {
+        const container = document.getElementById('quiz-container');
+        let html = '';
+        for (let i = 0; i < quizQuestions.length; i++) {
+            const q = quizQuestions[i];
+            html += `<div class="quiz-question" data-q="${i}">
+                        <div class="quiz-question-text">${i+1}. ${q.text}</div>
+                        <div class="quiz-options">`;
+            for (let j = 0; j < q.options.length; j++) {
+                html += `<label>
+                            <input type="radio" name="q${i}" value="${j}">
+                            ${String.fromCharCode(65+j)}. ${q.options[j]}
+                         </label><br>`;
+            }
+            html += `</div><div class="quiz-feedback" id="fb${i}"></div></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function submitQuiz() {
+        let score = 0;
+        for (let i = 0; i < quizQuestions.length; i++) {
+            const radios = document.getElementsByName(`q${i}`);
+            let selectedValue = null;
+            for (let j = 0; j < radios.length; j++) {
+                if (radios[j].checked) {
+                    selectedValue = parseInt(radios[j].value);
+                    break;
+                }
+            }
+            const feedbackDiv = document.getElementById(`fb${i}`);
+            const correctValue = quizQuestions[i].correct;
+            
+            if (selectedValue === correctValue) {
+                score++;
+                feedbackDiv.innerHTML = "✓ Correct! " + quizQuestions[i].options[correctValue];
+                feedbackDiv.className = "quiz-feedback correct";
+            } else {
+                feedbackDiv.innerHTML = "✗ Incorrect. The correct answer is " + String.fromCharCode(65+correctValue) + ". " + quizQuestions[i].options[correctValue];
+                feedbackDiv.className = "quiz-feedback incorrect";
+            }
+        }
+        const percent = (score / quizQuestions.length) * 100;
+        document.getElementById('quiz-score').innerHTML = `Your score: ${score} out of ${quizQuestions.length} (${percent.toFixed(1)}%)`;
+    }
+
+    generateQuiz();
+    const firstChapter = document.querySelector('.chapter-card');
+    if (firstChapter) firstChapter.classList.add('open');
+</script>
+</body>
+</html>

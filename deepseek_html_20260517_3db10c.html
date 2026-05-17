@@ -113,6 +113,66 @@
             padding: 2rem;
         }
 
+        /* Introduction card styling */
+        .intro-card {
+            background: linear-gradient(135deg, #f0f7fc 0%, #e8f0f7 100%);
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #cde3ef;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .intro-head {
+            background: #2c7aa0;
+            padding: 1rem 1.8rem;
+            color: white;
+        }
+
+        .intro-head h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .intro-content {
+            padding: 1.5rem 2rem;
+        }
+
+        .intro-content .section-title {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left-color: #2c7aa0;
+        }
+
+        .two-types {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .type-box {
+            flex: 1;
+            background: white;
+            border-radius: 0.8rem;
+            padding: 1rem;
+            border: 1px solid #cde3ef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .type-box h4 {
+            color: #1a4d62;
+            margin-bottom: 0.5rem;
+        }
+
+        .example-mini {
+            background: #fef7e0;
+            border-left: 4px solid #e6b12e;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.6rem;
+            margin: 1rem 0;
+        }
+
         .chapter-card {
             background: #ffffff;
             border-radius: 1.2rem;
@@ -341,6 +401,9 @@
             .lecture-content {
                 padding: 1rem;
             }
+            .two-types {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -348,18 +411,7 @@
 <div class="container">
     <div class="hero">
         <h1>📖 STAT 103 · Complete Course</h1>
-        <p>Every concept is defined in complete sentences. R code examples are provided for visualization, descriptive statistics, confidence intervals, and hypothesis testing.</p>
-        <div class="badge-row">
-            <span class="badge">📋 Data Collection</span>
-            <span class="badge">📊 Visualization + R</span>
-            <span class="badge">📈 Descriptive Stats + R</span>
-            <span class="badge">🎲 Probability</span>
-            <span class="badge">📏 Normal Dist.</span>
-            <span class="badge">🔁 Sampling & CLT</span>
-            <span class="badge">📐 Confidence Intervals + R</span>
-            <span class="badge">🔬 Hypothesis Tests + R</span>
-            <span class="badge">🔒 Privacy & Ethics</span>
-        </div>
+       
     </div>
 
     <div class="tab-bar">
@@ -370,6 +422,52 @@
     <!-- LECTURE NOTES PANE -->
     <div id="notes-pane" class="content-pane active">
         <div class="chapters-wrapper">
+            
+            <!-- ==================== NEW INTRODUCTION SECTION ==================== -->
+            <div class="intro-card">
+                <div class="intro-head">
+                    <h3>📌 What is Statistics?</h3>
+                </div>
+                <div class="intro-content">
+                    <p><strong>Statistics</strong> is a branch of mathematics that deals with collecting, organizing, analyzing, interpreting, and presenting data.</p>
+                    <p>In simple terms, statistics helps us make sense of numbers and information so we can understand patterns, trends, and make decisions.</p>
+                    
+                    <div class="section-title">🔹 What statistics involves</div>
+                    <ul>
+                        <li><strong>Collecting data:</strong> Gathering information through surveys, experiments, or observations.</li>
+                        <li><strong>Organizing data:</strong> Arranging information into tables, charts, and graphs to make it easier to understand.</li>
+                        <li><strong>Analyzing data:</strong> Finding patterns, calculating averages, and identifying relationships within the data.</li>
+                        <li><strong>Interpreting results:</strong> Drawing meaningful conclusions from the analysis.</li>
+                        <li><strong>Presenting findings:</strong> Communicating results through reports, visualizations, and summaries.</li>
+                    </ul>
+                    
+                    <div class="section-title">🔹 Two main types of statistics</div>
+                    <div class="two-types">
+                        <div class="type-box">
+                            <h4>📊 Descriptive Statistics</h4>
+                            <p>Descriptive statistics summarizes data using measures like the mean, median, and standard deviation, as well as graphs like histograms and boxplots. Descriptive statistics simply describes what the data show without making predictions beyond the data.</p>
+                        </div>
+                        <div class="type-box">
+                            <h4>🔮 Inferential Statistics</h4>
+                            <p>Inferential statistics uses sample data to make predictions, inferences, or generalizations about a larger population. This type of statistics includes confidence intervals and hypothesis tests.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="example-mini">
+                        <strong>📘 Example:</strong> If a teacher records students' test scores:<br>
+                        • Calculating the average score of the class is <strong>descriptive statistics</strong> because it simply summarizes the data at hand.<br>
+                        • Using the class average to predict how future students might perform is <strong>inferential statistics</strong> because it makes a generalization beyond the observed data.
+                    </div>
+                    
+                    <div class="section-title">🔹 Why statistics is important</div>
+                    <ul>
+                        <li><strong>Helps in decision-making:</strong> Businesses, governments, and scientists use statistics to make informed decisions based on data rather than intuition.</li>
+                        <li><strong>Used in research and experiments:</strong> Almost every scientific field relies on statistics to analyze results and draw valid conclusions.</li>
+                        <li><strong>Helps understand real-world trends:</strong> Statistics allows us to understand patterns in the economy, health outcomes, sports performance, and many other areas of daily life.</li>
+                    </ul>
+                </div>
+            </div>
+            
             <!-- CHAPTER 1: DATA COLLECTION -->
             <div class="chapter-card open">
                 <div class="chapter-head" onclick="toggleChapter(this)">
@@ -495,7 +593,7 @@
                         boxplot(exam_scores ~ gender, main="Exam Scores by Gender", xlab="Gender", ylab="Scores", col=c("pink","lightblue"))
                     </div>
                     <div class="r-note">
-                        💡 <strong>Try it yourself:</strong> Go to <a href="https://www.mycompiler.io/new/r" target="_blank">myCompiler.io/R</a>, paste the code above, and click "Run". You will see all four plots generated.
+                        💡 <strong>Try it yourself:</strong> Go to the webpage <a href="https://www.mycompiler.io/new/r" target="_blank">myCompiler.io/R</a>, paste the code above, and click "Run". You will see all four plots generated.
                     </div>
                 </div>
             </div>
